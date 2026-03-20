@@ -2,74 +2,79 @@ import { createInterface } from "node:readline/promises";
 import type { Interface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
-import { checkBudget, formatBudgetReport, formatStudentSummary } from "./lib";
-import type { BudgetCheckResult } from "./lib";
+import { buildStudentBudgetOutput } from "./app";
+import type { StudentBudgetOutput } from "./app";
+import { promptNonEmptyText, promptNumber } from "./io/readlinePrompts";
 
-async function promptNonEmptyText(
-  rl: Interface, // Explicit: ensures we can call rl.question(...) with correct typing.
-  label: string // Explicit: ensures prompt label is always a string for composing the question.
-): Promise<string> /* Explicit: this prompt resolves to a string value from user input. */ {
-  while (true) {
-    const raw: string = await rl.question(label + ": "); // Explicit: readline returns a string line.
-    const value: string = raw.trim(); // Explicit: normalized input is still a string; annotated per requirement.
+export function formatUnknownError(err: unknown): string {
+  if (err instanceof Error) {
+    return err.stack ?? err.message;
+  }
 
-    if (value.length > 0) {
-      return value;
-    }
+  if (typeof err === "string") {
+    return err;
+  }
 
-    console.log("Please enter a non-empty value.");
+  try {
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
   }
 }
 
-async function promptNumber(
-  rl: Interface, // Explicit: ensures we can call rl.question(...) with correct typing.
-  label: string, // Explicit: ensures prompt label is always a string for composing the question.
-  options?: { min?: number; max?: number } // Explicit: typed options make validation rules explicit and type-safe.
-): Promise<number> /* Explicit: this prompt resolves to a number used in calculations. */ {
-  while (true) {
-    const raw: string = await rl.question(label + ": "); // Explicit: readline returns a string line.
-    const trimmed: string = raw.trim(); // Explicit: normalized input is a string; annotated per requirement.
-    const value: number = Number(trimmed); // Explicit: parsing result must be a number for arithmetic.
+export function reportFatalError(context: string, err: unknown): void {
+  console.error(context + ": " + formatUnknownError(err));
+}
 
-    if (!Number.isFinite(value)) {
-      console.log("Please enter a valid number (e.g., 300 or 250.50).");
-      continue;
-    }
+export function installProcessErrorHandlers(): void {
+  process.on("unhandledRejection", (reason: unknown): void => {
+    reportFatalError("Unhandled promise rejection", reason);
+    process.exitCode = process.exitCode ?? 1;
+  });
 
-    if (options?.min !== undefined && value < options.min) {
-      console.log("Please enter a number >= " + String(options.min) + ".");
-      continue;
-    }
-
-    if (options?.max !== undefined && value > options.max) {
-      console.log("Please enter a number <= " + String(options.max) + ".");
-      continue;
-    }
-
-    return value;
-  }
+  process.on("uncaughtException", (err: unknown): void => {
+    reportFatalError("Uncaught exception", err);
+    process.exitCode = 1;
+  });
 }
 
 async function main(): Promise<void> /* Explicit: async CLI entrypoint resolves with no value. */ {
-    const rl: Interface = createInterface({ input: input, output: output }); // Explicit: pins the readline interface type for our helpers.
+  const rl: Interface = createInterface({ input: input, output: output }); // Explicit: pins the readline interface type for our helpers.
 
   try {
     const studentName: string = await promptNonEmptyText(rl, "Student name"); // Explicit: ensures name is a string for the summary function.
     const monthlyAllowance: number = await promptNumber(rl, "Monthly allowance", { min: 0 }); // Explicit: ensures allowance is numeric and non-negative.
     const amountSpent: number = await promptNumber(rl, "Amount spent this month", { min: 0 }); // Explicit: ensures spending is numeric and non-negative.
 
-    const summaryOutput: string = formatStudentSummary(studentName, monthlyAllowance); // Explicit: ensures we print a string summary.
-    console.log(summaryOutput);
+    const out: StudentBudgetOutput = buildStudentBudgetOutput({
+      studentName: studentName,
+      monthlyAllowance: monthlyAllowance,
+      amountSpent: amountSpent,
+    });
 
-    const budgetResult: BudgetCheckResult = checkBudget(amountSpent, monthlyAllowance); // Explicit: pins the result shape for output formatting.
-
-    const budgetOutput: string = formatBudgetReport(amountSpent, budgetResult); // Explicit: ensures the report is a string produced by a testable formatter.
-    console.log(budgetOutput);
+    console.log(out.summary);
+    console.log(out.report);
   } finally {
     rl.close();
   }
 }
 
+export async function runWithErrorBoundary(
+  fn: () => Promise<void>,
+  options?: { installProcessHandlers?: boolean; fatalContext?: string }
+): Promise<void> {
+  if (options?.installProcessHandlers === true) {
+    installProcessErrorHandlers();
+  }
+
+  try {
+    await fn();
+  } catch (err: unknown) {
+    reportFatalError(options?.fatalContext ?? "Fatal error", err);
+    process.exitCode = 1;
+  }
+}
+
 if (require.main === module) {
-  void main(); // Intentional: run the async entrypoint without top-level await.
+  void runWithErrorBoundary(main, { installProcessHandlers: true }); // Intentional: run the async entrypoint without top-level await.
 }
