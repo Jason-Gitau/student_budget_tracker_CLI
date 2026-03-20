@@ -1,5 +1,6 @@
 import { checkBudget, formatBudgetReport, formatStudentSummary } from "./lib";
 import type { BudgetCheckResult } from "./lib";
+import type { DisplayPreferences } from "./lib";
 
 export type StudentBudgetInput = {
   studentName: string;
@@ -32,7 +33,10 @@ function assertMin(label: string, value: number, min: number): void {
   }
 }
 
-export function buildStudentBudgetOutput(input: StudentBudgetInput): StudentBudgetOutput {
+export function buildStudentBudgetOutput(
+  input: StudentBudgetInput,
+  displayPreferences: DisplayPreferences = {}
+): StudentBudgetOutput {
   assertNonEmptyText("Student name", input.studentName);
 
   assertFiniteNumber("Monthly allowance", input.monthlyAllowance);
@@ -41,10 +45,9 @@ export function buildStudentBudgetOutput(input: StudentBudgetInput): StudentBudg
   assertFiniteNumber("Amount spent", input.amountSpent);
   assertMin("Amount spent", input.amountSpent, 0);
 
-  const summary: string = formatStudentSummary(input.studentName, input.monthlyAllowance);
+  const summary: string = formatStudentSummary(input.studentName, input.monthlyAllowance, displayPreferences);
   const budgetResult: BudgetCheckResult = checkBudget(input.amountSpent, input.monthlyAllowance);
-  const report: string = formatBudgetReport(input.amountSpent, budgetResult);
+  const report: string = formatBudgetReport(input.amountSpent, budgetResult, displayPreferences);
 
   return { summary: summary, report: report, budgetResult: budgetResult };
 }
-

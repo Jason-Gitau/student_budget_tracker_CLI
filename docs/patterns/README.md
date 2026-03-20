@@ -5,7 +5,7 @@ This directory is a running log of **TypeScript patterns** you practice in this 
 These notes are written for two audiences:
 
 - **Right now**: help you understand what the pattern is and how it shows up in real code.
-- **Future you**: a quick refresher with “when to use it”, pitfalls, and debugging clues.
+- **Future you**: a quick refresher with "when to use it", pitfalls, and debugging clues.
 
 ## When to add a note
 

@@ -8,8 +8,9 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "ts-node test/run-tests.ts"
+    "typecheck": "tsc -p tsconfig.test.json --noEmit",
+    "build:test": "tsc -p tsconfig.test.json",
+    "test": "npm run build:test && node dist-test/test/run-tests.js"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
