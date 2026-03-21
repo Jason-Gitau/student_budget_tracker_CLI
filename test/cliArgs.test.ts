@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 
 import { getHelpText, parseCliArgs } from "../src/cliArgs";
 
@@ -45,4 +45,3 @@ describe("cliArgs", () => {
     assert.equal(help.includes("--help"), true);
   });
 });
-

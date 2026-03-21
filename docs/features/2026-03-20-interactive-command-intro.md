@@ -12,7 +12,7 @@ Date: 2026-03-20
 - Files touched:
   - `src/cliCommands.ts`
   - `src/index.ts`
-  - `test/run-tests.ts`
+  - `test/**/*.test.ts`
 - New/changed functions/types:
   - `parseCliCommand(input)` (new)
   - `getIntroText()` (new)

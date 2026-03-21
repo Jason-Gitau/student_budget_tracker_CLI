@@ -18,9 +18,8 @@ Simple TypeScript CLI app for tracking a student's monthly budget.
 ## Tests
 
 - Tests live in `test/**/*.test.ts`.
-- `npm test` compiles tests to `dist-test/` (via `tsconfig.test.json`) and then runs them.
+- Tests run with Vitest via `npm test`.
 
 ## CI
 
 GitHub Actions runs `npm ci`, `npm run typecheck`, `npm run build`, and `npm test` on pushes and pull requests to `main`.
-

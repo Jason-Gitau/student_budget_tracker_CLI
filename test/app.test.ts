@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 
 import { buildStudentBudgetOutput } from "../src/app";
 
@@ -40,4 +40,3 @@ describe("app", () => {
     assert.equal(out.report.includes("Spent this month: Â£250.0"), true);
   });
 });
-

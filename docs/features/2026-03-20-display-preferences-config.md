@@ -12,7 +12,7 @@ Date: 2026-03-20
 - Files touched:
   - `src/lib.ts`
   - `src/app.ts`
-  - `test/run-tests.ts`
+  - `test/**/*.test.ts`
 - New/changed functions/types:
   - `DisplayPreferences` (new)
   - `formatStudentSummary(..., displayPreferences?)` (new optional param)
