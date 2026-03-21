@@ -1,6 +1,6 @@
 # Tests
 
-Tests live under `test/` and are run with Node's built-in test runner (`node:test`).
+Tests live under `test/` and are run with Vitest.
 
 ## Commands
 
@@ -14,6 +14,5 @@ Tests live under `test/` and are run with Node's built-in test runner (`node:tes
 
 ## Notes
 
-- Tests use `node:test` for `describe`/`it` structure and `node:assert/strict` for assertions.
-- `npm test` compiles tests to `dist-test/` and runs `dist-test/test/run-tests.js` to load all `*.test.js` files.
+- Tests use Vitest for `describe`/`it` structure and `node:assert/strict` for assertions.
 - A few tests temporarily override globals (like `console.error` or `process.exitCode`) and restore them in `finally` to avoid cross-test flakiness.

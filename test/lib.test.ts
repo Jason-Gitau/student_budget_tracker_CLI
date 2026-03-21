@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 
 import { checkBudget, formatBudgetReport, formatStudentSummary } from "../src/lib";
 import type { BudgetCheckResult, DisplayPreferences } from "../src/lib";
@@ -53,4 +53,3 @@ describe("lib", () => {
     });
   });
 });
-

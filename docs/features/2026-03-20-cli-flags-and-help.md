@@ -12,7 +12,7 @@ Date: 2026-03-20
 - Files touched:
   - `src/cliArgs.ts`
   - `src/index.ts`
-  - `test/run-tests.ts`
+  - `test/**/*.test.ts`
 - New/changed functions/types:
   - `parseCliArgs(argv)` (new)
   - `getHelpText()` (new)

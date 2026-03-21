@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { describe, it } from "vitest";
 
 import { formatUnknownError, runWithErrorBoundary } from "../src/index";
 
@@ -51,4 +51,3 @@ describe("index utilities", () => {
     assert.equal(exitCodeAfter, 1);
   });
 });
-
