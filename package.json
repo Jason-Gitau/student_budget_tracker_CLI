@@ -9,7 +9,7 @@
     "start": "ts-node src/index.ts",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.test.json --noEmit",
-    "test": "vitest run --dir test --pool=threads --no-file-parallelism --maxWorkers=1 --exclude dist/** --exclude dist-test/**",
+    "test": "vitest run --dir test --pool=threads --no-file-parallelism --maxWorkers=1 --exclude \"dist/**\" --exclude \"dist-test/**\"",
     "test:watch": "vitest"
   },
   "devDependencies": {
